@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UniTacWAM: A Unified Visuo-Tactile World Action Model for Grippers and Dexterous Hands</title>
+<meta name="description" content="UniTacWAM: A Unified Visuo-Tactile World Action Model for Grippers and Dexterous Hands.">
+<meta property="og:title" content="UniTacWAM"><meta property="og:description" content="A Unified Visuo-Tactile World Action Model for Grippers and Dexterous Hands">
+<link rel="icon" href="logo.png">
+<style>
+:root { --bg:#05070d; --fg:#eef2ff; --muted:#9aa4bf; --line:rgba(160,180,255,.14); --glass:rgba(16,22,40,.55);
+  --c1:#38bdf8; --c2:#8b5cf6; --c3:#22d3ee; --ref:#4b5470; }
+* { box-sizing:border-box; }
+html, body { margin:0; background:var(--bg); color:var(--fg); }
+body { font:16px/1.65 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow-x:hidden; }
+a { color:inherit; }
+.aurora { position:fixed; inset:-20%; z-index:-3; filter:blur(70px) saturate(140%); opacity:.55; pointer-events:none; }
+.aurora span { position:absolute; width:46vmax; height:46vmax; border-radius:50%; mix-blend-mode:screen; animation:drift 26s ease-in-out infinite alternate; }
+.aurora span:nth-child(1) { background:radial-gradient(circle, #1d4ed8 0%, transparent 62%); left:5%; top:0%; }
+.aurora span:nth-child(2) { background:radial-gradient(circle, #7c3aed 0%, transparent 62%); right:0%; top:10%; animation-duration:32s; }
+.aurora span:nth-child(3) { background:radial-gradient(circle, #0891b2 0%, transparent 62%); left:25%; bottom:-10%; animation-duration:38s; }
+@keyframes drift { 0% { transform:translate(0,0) scale(1); } 50% { transform:translate(6vmax,4vmax) scale(1.15); } 100% { transform:translate(-5vmax,7vmax) scale(.95); } }
+.grid { position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background-image:linear-gradient(rgba(140,160,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(140,160,255,.06) 1px, transparent 1px);
+  background-size:44px 44px; mask-image:radial-gradient(ellipse at 50% 20%, #000 30%, transparent 80%); -webkit-mask-image:radial-gradient(ellipse at 50% 20%, #000 30%, transparent 80%); }
+header.hero { position:relative; display:flex; align-items:center; overflow:hidden; }
+#field { position:absolute; inset:0; width:100%; height:100%; z-index:0; }
+.hero-inner { position:relative; z-index:1; max-width:1040px; margin:0 auto; padding:64px 16px 48px; width:100%; }
+.headrow { display:flex; align-items:center; flex-wrap:wrap; gap:14px 28px; margin:18px 0 12px; }
+.badge { display:inline-flex; align-items:center; gap:8px; padding:6px 14px; border:1px solid var(--line); border-radius:999px; background:var(--glass);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); color:var(--muted); font-size:13px; letter-spacing:.02em; }
+.badge b { color:var(--fg); }
+.dot { width:8px; height:8px; border-radius:50%; background:var(--c3); box-shadow:0 0 12px var(--c3); animation:pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity:.35; } }
+h1 { font-size:clamp(48px, 9vw, 96px); line-height:1; margin:0; letter-spacing:-0.04em; font-weight:800;
+  background:linear-gradient(100deg, #ffffff 10%, var(--c1) 45%, var(--c2) 75%, #f0abfc 100%); background-size:200% 100%;
+  -webkit-background-clip:text; background-clip:text; color:transparent; animation:shine 9s ease-in-out infinite alternate; }
+@keyframes shine { to { background-position:100% 0; } }
+.title { font-size:clamp(20px, 2.6vw, 28px); line-height:1.3; max-width:860px; margin:0 0 24px; font-weight:600; color:#dfe6ff; }
+.org { display:inline-flex; align-items:center; gap:12px; margin:0; font-weight:600; font-size:17px; text-decoration:none; color:var(--fg);
+  padding:8px 16px 8px 10px; border-radius:14px; border:1px solid var(--line); background:var(--glass); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); transition:border-color .2s; }
+.org:hover { border-color:rgba(160,180,255,.45); }
+.org img { height:38px; width:auto; }
+.links { display:flex; gap:12px; flex-wrap:wrap; }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:12px 22px; border-radius:999px; font-weight:650; font-size:15px; text-decoration:none;
+  border:1px solid var(--line); background:var(--glass); color:var(--fg); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+.btn.primary { background:linear-gradient(100deg, var(--c1), var(--c2)); border-color:transparent; box-shadow:0 8px 30px rgba(99,102,241,.35); }
+.btn.primary:hover { filter:brightness(1.08); }
+.btn.disabled { color:var(--muted); cursor:default; }
+.soon { font-size:11px; padding:2px 8px; border-radius:999px; background:rgba(255,255,255,.08); color:var(--muted); }
+.scroll { position:absolute; left:50%; bottom:26px; transform:translateX(-50%); color:var(--muted); font-size:12px; letter-spacing:.2em; z-index:1; }
+main { max-width:1040px; margin:0 auto; padding:0 16px 80px; }
+section { margin:0 0 52px; }
+h2 { font-size:clamp(26px, 3.4vw, 36px); margin:0 0 8px; letter-spacing:-0.02em; }
+.kicker { color:var(--c3); font-size:13px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; margin:0 0 6px; }
+.lead { color:#c9d2ee; font-size:18px; max-width:820px; }
+.glass { background:var(--glass); border:1px solid var(--line); border-radius:20px; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+.pillars { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin-top:22px; }
+.pillar { padding:20px; }
+.pillar h3 { margin:0 0 6px; font-size:17px; }
+.pillar p { margin:0; color:var(--muted); font-size:15px; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:14px; margin:22px 0 10px; }
+.stat { padding:20px 22px; position:relative; overflow:hidden; }
+.stat::after { content:""; position:absolute; inset:auto -40% -60% auto; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle, rgba(56,189,248,.22), transparent 70%); }
+.stat .v { font-size:40px; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:-0.02em;
+  background:linear-gradient(100deg, #fff, var(--c1)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.stat .k { color:var(--muted); font-size:14px; }
+.rank { display:inline-block; margin-left:6px; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px; background:linear-gradient(100deg, var(--c1), var(--c2)); color:#fff; vertical-align:middle; }
+.note { color:var(--muted); font-size:14px; }
+.tablewrap { overflow-x:auto; padding:4px; }
+table { border-collapse:collapse; width:100%; font-size:15px; font-variant-numeric:tabular-nums; }
+th, td { padding:12px 14px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap; }
+th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3) { text-align:left; }
+tr:last-child td { border-bottom:none; }
+th { color:var(--muted); font-weight:600; font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+td.sc { font-weight:700; }
+tr.ours td { background:linear-gradient(90deg, rgba(56,189,248,.16), rgba(139,92,246,.16)); font-weight:700; }
+.chans { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; }
+.chan { padding:18px; text-align:center; }
+.chan .cv { font-size:30px; font-weight:800; font-variant-numeric:tabular-nums; }
+.chan .ck { color:var(--muted); font-size:13px; }
+.bars { padding:20px 22px; }
+.bar-row { display:grid; grid-template-columns:minmax(0, 280px) 1fr 48px; gap:12px; align-items:center; margin:5px 0; font-size:13px; }
+.bar-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); }
+.bar-track { position:relative; height:16px; }
+.bar { position:absolute; left:0; height:6px; border-radius:4px; }
+.ours-bar { top:5px; background:linear-gradient(90deg, var(--c1), var(--c2)); box-shadow:0 0 12px rgba(99,102,241,.5); }
+.ref-bar { top:9px; background:var(--ref); }
+.bar-val { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; }
+.legend { display:flex; gap:18px; font-size:13px; color:var(--muted); margin:0 0 12px; }
+.sw { display:inline-block; width:14px; height:6px; border-radius:3px; margin-right:6px; vertical-align:middle; }
+footer { border-top:1px solid var(--line); padding:28px 16px 40px; text-align:center; color:var(--muted); font-size:13px; }
+.chans .glass, .pillars .glass, .stats .glass { transition:transform .25s, border-color .25s; }
+.chans .glass:hover, .pillars .glass:hover, .stats .glass:hover { transform:translateY(-3px); border-color:rgba(160,180,255,.4); }
+.reveal { opacity:0; transform:translateY(18px); transition:opacity .8s ease, transform .8s ease; }
+.reveal.in { opacity:1; transform:none; }
+@media (max-width:640px) { .chans { grid-template-columns:repeat(2, 1fr); } .bar-row { grid-template-columns:120px 1fr 42px; } }
+@media (prefers-reduced-motion: reduce) { .aurora span, h1, .dot { animation:none; } .reveal { opacity:1; transform:none; transition:none; } }
+</style></head>
+<body>
+<div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="grid" aria-hidden="true"></div>
+
+<header class="hero">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <span class="badge"><span class="dot"></span>Bench2Dex · <b>#1</b> by leaderboard score · single checkpoint</span>
+    <div class="headrow"><h1>UniTacWAM</h1>
+    <a class="org" href="https://spacelab-ntu.com/" target="_blank" rel="noopener"><img src="logo.png" alt="NTU">NTU Space Lab</a></div>
+    <p class="title">A Unified Visuo-Tactile World Action Model for Grippers and Dexterous Hands</p>
+    <div class="links">
+      <span class="btn disabled" title="coming soon">Paper · arXiv <span class="soon">coming soon</span></span>
+      <a class="btn primary" href="https://github.com/NTU-SPACE-Lab/UniTacWAM">Code · GitHub</a>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="reveal">
+  <p class="kicker">Overview</p>
+  <h2>See, feel and act — with one model</h2>
+  <p class="lead">UniTacWAM is a single world action model that sees, feels and acts across embodiments. One unified action space
+  covers parallel-jaw grippers and a wide range of dexterous hands, and tactile signals from fingertips or gripper pads enter the
+  same model. On Bench2Dex, one checkpoint handles all 26 bimanual dexterous tasks across 15 robot–hand pairs.</p>
+  <div class="pillars">
+    <div class="glass pillar"><h3>Unified embodiment</h3><p>Grippers and dexterous hands share one action space and one set of weights.</p></div>
+    <div class="glass pillar"><h3>Visuo-tactile</h3><p>Vision and touch are modelled jointly inside the world action model.</p></div>
+    <div class="glass pillar"><h3>One checkpoint</h3><p>A single checkpoint is evaluated on every Bench2Dex task — no per-task models.</p></div>
+  </div>
+</section>
+
+<section class="reveal">
+  <p class="kicker">Results</p>
+  <h2>Bench2Dex <span class="rank">#1</span></h2>
+  <div class="stats">
+    <div class="glass stat"><div class="v">65.47</div><div class="k">Success rate (%)</div></div>
+    <div class="glass stat"><div class="v">83.56</div><div class="k">Stage completion, LSCR (%)</div></div>
+    <div class="glass stat"><div class="v">0.985</div><div class="k">Efficiency</div></div>
+    <div class="glass stat"><div class="v">76.91</div><div class="k">Leaderboard score</div></div>
+  </div>
+  <p class="note">26 tasks × 4 channels × 50 episodes (5195 evaluated), Bench2Dex commit cf83e86, one checkpoint for all tasks.
+  Score = 0.45·SR + 0.45·LSCR + 10·Eff. Self-evaluated; the leaderboard submission is in preparation.</p>
+</section>
+
+<section class="reveal">
+  <p class="kicker">Leaderboard</p>
+  <h2>Comparison with the Bench2Dex leaderboard</h2>
+  <div class="glass tablewrap"><table>
+  <thead><tr><th>#</th><th>Model</th><th>Organization</th><th>SR</th><th>LSCR</th><th>Eff.</th><th>Score</th></tr></thead>
+  <tbody>
+<tr class="ours"><td>1</td><td>UniTacWAM (ours)</td><td>NTU Space Lab</td><td>65.47</td><td>83.56</td><td>0.985</td><td class="sc">76.91</td></tr>
+<tr class=""><td>2</td><td>PyRUA-Dex</td><td>PKU DAGroup</td><td>60.58</td><td>82.32</td><td>0.859</td><td class="sc">72.89</td></tr>
+<tr class=""><td>3</td><td>ME-Dex 1.5</td><td>Li Auto.</td><td>58.60</td><td>76.31</td><td>0.979</td><td class="sc">70.50</td></tr>
+<tr class=""><td>4</td><td>GigaWorld-Policy-0.6</td><td>GigaAI</td><td>51.37</td><td>70.91</td><td>0.962</td><td class="sc">64.64</td></tr>
+<tr class=""><td>5</td><td>Phoenix-MWA (w. Pretrain)</td><td>Anyverse &amp; OpenPhoenix</td><td>45.60</td><td>65.61</td><td>0.903</td><td class="sc">59.07</td></tr>
+<tr class=""><td>6</td><td>MXI</td><td>1011.ai</td><td>36.87</td><td>54.78</td><td>0.970</td><td class="sc">50.95</td></tr>
+<tr class=""><td>7</td><td>Mora V0</td><td>Morphi Robot</td><td>33.23</td><td>52.31</td><td>0.974</td><td class="sc">48.23</td></tr>
+  </tbody></table></div>
+  <p class="note">Other entries: public leaderboard snapshot of 2026-11-20 (ranked entries with all 26 tasks).</p>
+</section>
+
+<section class="reveal">
+  <p class="kicker">Robustness</p>
+  <h2>Success rate per channel</h2>
+  <div class="chans"><div class="glass chan"><div class="cv">68.5</div><div class="ck">None</div></div><div class="glass chan"><div class="cv">61.4</div><div class="ck">Equi.</div></div><div class="glass chan"><div class="cv">66.0</div><div class="ck">Inv.</div></div><div class="glass chan"><div class="cv">65.9</div><div class="ck">Full</div></div></div>
+</section>
+
+<section class="reveal">
+  <p class="kicker">Per task</p>
+  <h2>Success rate on all 26 tasks</h2>
+  <div class="glass bars">
+    <div class="bar-row"><div class="bar-label">03 · Wine Glass Plate Balance</div><div class="bar-track"><div class="bar ours-bar" style="width:51.0%"></div></div><div class="bar-val">51.0</div></div><div class="bar-row"><div class="bar-label">06 · Fruit Bowl Loading</div><div class="bar-track"><div class="bar ours-bar" style="width:86.0%"></div></div><div class="bar-val">86.0</div></div><div class="bar-row"><div class="bar-label">07 · Citrus Plate Loading</div><div class="bar-track"><div class="bar ours-bar" style="width:94.5%"></div></div><div class="bar-val">94.5</div></div><div class="bar-row"><div class="bar-label">08 · Frypan Stand &amp; Pour</div><div class="bar-track"><div class="bar ours-bar" style="width:92.0%"></div></div><div class="bar-val">92.0</div></div><div class="bar-row"><div class="bar-label">09 · Cleaner Box Loading</div><div class="bar-track"><div class="bar ours-bar" style="width:68.5%"></div></div><div class="bar-val">68.5</div></div><div class="bar-row"><div class="bar-label">12 · Screwdriver Box &amp; Hammer</div><div class="bar-track"><div class="bar ours-bar" style="width:76.5%"></div></div><div class="bar-val">76.5</div></div><div class="bar-row"><div class="bar-label">21 · Condiment Box Loading</div><div class="bar-track"><div class="bar ours-bar" style="width:84.0%"></div></div><div class="bar-val">84.0</div></div><div class="bar-row"><div class="bar-label">22 · Tool Box Loading</div><div class="bar-track"><div class="bar ours-bar" style="width:39.0%"></div></div><div class="bar-val">39.0</div></div><div class="bar-row"><div class="bar-label">24 · Stationery Category Sorting</div><div class="bar-track"><div class="bar ours-bar" style="width:48.5%"></div></div><div class="bar-val">48.5</div></div><div class="bar-row"><div class="bar-label">26 · Canned Food Tray Arrangement</div><div class="bar-track"><div class="bar ours-bar" style="width:48.0%"></div></div><div class="bar-val">48.0</div></div><div class="bar-row"><div class="bar-label">27 · Ball Box Loading</div><div class="bar-track"><div class="bar ours-bar" style="width:66.0%"></div></div><div class="bar-val">66.0</div></div><div class="bar-row"><div class="bar-label">32 · Baking Tray Prep</div><div class="bar-track"><div class="bar ours-bar" style="width:16.5%"></div></div><div class="bar-val">16.5</div></div><div class="bar-row"><div class="bar-label">34 · Fridge Wine Interhand Pour</div><div class="bar-track"><div class="bar ours-bar" style="width:77.0%"></div></div><div class="bar-val">77.0</div></div><div class="bar-row"><div class="bar-label">42 · Trash Disposal</div><div class="bar-track"><div class="bar ours-bar" style="width:63.0%"></div></div><div class="bar-val">63.0</div></div><div class="bar-row"><div class="bar-label">43 · Fridge Fruit Shelf Sorting</div><div class="bar-track"><div class="bar ours-bar" style="width:49.0%"></div></div><div class="bar-val">49.0</div></div><div class="bar-row"><div class="bar-label">44 · Microwave Bowl Loading</div><div class="bar-track"><div class="bar ours-bar" style="width:98.0%"></div></div><div class="bar-val">98.0</div></div><div class="bar-row"><div class="bar-label">51 · Toilet Lid Cleaner Pour</div><div class="bar-track"><div class="bar ours-bar" style="width:70.5%"></div></div><div class="bar-val">70.5</div></div><div class="bar-row"><div class="bar-label">60 · Breadbasket Fast-Food Loading</div><div class="bar-track"><div class="bar ours-bar" style="width:77.0%"></div></div><div class="bar-val">77.0</div></div><div class="bar-row"><div class="bar-label">61 · Medicine Shoebox Pack</div><div class="bar-track"><div class="bar ours-bar" style="width:69.5%"></div></div><div class="bar-val">69.5</div></div><div class="bar-row"><div class="bar-label">62 · Shoebox Accessory Pack</div><div class="bar-track"><div class="bar ours-bar" style="width:89.0%"></div></div><div class="bar-val">89.0</div></div><div class="bar-row"><div class="bar-label">64 · Sports Ball Cup Sort</div><div class="bar-track"><div class="bar ours-bar" style="width:72.7%"></div></div><div class="bar-val">72.7</div></div><div class="bar-row"><div class="bar-label">67 · Faucet Cup Water Fill</div><div class="bar-track"><div class="bar ours-bar" style="width:69.5%"></div></div><div class="bar-val">69.5</div></div><div class="bar-row"><div class="bar-label">73 · Jigsaw Puzzle Assembly</div><div class="bar-track"><div class="bar ours-bar" style="width:3.0%"></div></div><div class="bar-val">3.0</div></div><div class="bar-row"><div class="bar-label">76 · Soup Serving</div><div class="bar-track"><div class="bar ours-bar" style="width:33.5%"></div></div><div class="bar-val">33.5</div></div><div class="bar-row"><div class="bar-label">79 · Bimanual Piano Melody</div><div class="bar-track"><div class="bar ours-bar" style="width:89.0%"></div></div><div class="bar-val">89.0</div></div><div class="bar-row"><div class="bar-label">80 · Gaming Desk Setup</div><div class="bar-track"><div class="bar ours-bar" style="width:71.0%"></div></div><div class="bar-val">71.0</div></div>
+  </div>
+</section>
+</main>
+
+<footer>UniTacWAM · <a href="https://spacelab-ntu.com/" target="_blank" rel="noopener">NTU Space Lab</a> · paper on arXiv coming soon ·
+<a href="https://github.com/NTU-SPACE-Lab/UniTacWAM">code on GitHub</a></footer>
+<script>
+(function () {
+  var c = document.getElementById('field'); if (!c) return;
+  var ctx = c.getContext('2d'), dpr = Math.min(window.devicePixelRatio || 1, 2), W = 0, H = 0, pts = [], mx = -1e4, my = -1e4, t0 = performance.now();
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function resize() {
+    var r = c.getBoundingClientRect(); W = r.width; H = r.height; c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    pts = []; var s = W < 640 ? 26 : 22;
+    for (var y = s / 2; y < H; y += s) for (var x = s / 2; x < W; x += s) pts.push([x, y]);
+    if (still) draw(0);
+  }
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < pts.length; i++) {
+      var p = pts[i], dx = p[0] - mx, dy = p[1] - my, d = Math.sqrt(dx * dx + dy * dy);
+      var press = Math.max(0, 1 - d / 170);
+      var wave = 0.5 + 0.5 * Math.sin(p[0] * 0.012 + p[1] * 0.018 - t * 0.0011);
+      var k = (d - 60) * 0.025;
+      var ox = press * dx / (d + 1e-3) * 10 * Math.sin(k), oy = press * dy / (d + 1e-3) * 10 * Math.sin(k);
+      var a = 0.10 + 0.22 * wave + 0.65 * press;
+      var rad = 1.1 + 0.6 * wave + 2.2 * press;
+      ctx.fillStyle = press > 0.02 ? 'rgba(' + Math.round(56 + 83 * press) + ',' + Math.round(189 - 97 * press) + ',248,' + a.toFixed(3) + ')' : 'rgba(148,170,255,' + a.toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(p[0] + ox, p[1] + oy, rad, 0, 6.2832); ctx.fill();
+    }
+  }
+  function loop(now) { draw(now - t0); requestAnimationFrame(loop); }
+  window.addEventListener('resize', resize);
+  var hero = c.parentNode;
+  hero.addEventListener('pointermove', function (e) { var r = c.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
+  hero.addEventListener('pointerleave', function () { mx = my = -1e4; });
+  resize(); if (!still) requestAnimationFrame(loop);
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.12 }) : null;
+  document.querySelectorAll('.reveal').forEach(function (el) { if (io) io.observe(el); else el.classList.add('in'); });
+})();
+</script>
+</body></html>
