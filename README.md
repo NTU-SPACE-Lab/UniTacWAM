@@ -4,6 +4,7 @@
 
 UniTacWAM is a single world action model that sees, feels and acts across embodiments. One unified action space covers parallel-jaw grippers and a wide range of dexterous hands, and tactile signals from fingertips or gripper pads enter the same model. On Bench2Dex, one checkpoint handles all 26 bimanual dexterous tasks across 15 robot–hand pairs.
 
+- **Project lead:** Yanping Fu
 - **Paper:** arXiv (coming soon)
 - **Code:** coming soon
 
@@ -24,10 +25,9 @@ UniTacWAM is a single world action model that sees, feels and acts across embodi
 | 3 | ME-Dex 1.5 | Li Auto. | 58.60 | 76.31 | 0.979 | 70.50 |
 | 4 | GigaWorld-Policy-0.6 | GigaAI | 51.37 | 70.91 | 0.962 | 64.64 |
 | 5 | Phoenix-MWA (w. Pretrain) | Anyverse & OpenPhoenix | 45.60 | 65.61 | 0.903 | 59.07 |
-| 6 | MXI | 1011.ai | 36.87 | 54.78 | 0.970 | 50.95 |
-| 7 | Mora V0 | Morphi Robot | 33.23 | 52.31 | 0.974 | 48.23 |
+| 6 | Mora V0 | Morphi Robot | 33.23 | 52.31 | 0.974 | 48.23 |
 
-Other entries: public [Bench2Dex leaderboard](https://bench2dex.github.io/Bench2Dex-Leaderboard/) snapshot of 2026-11-20 (ranked entries with all 26 tasks).
+Other entries: public [Bench2Dex leaderboard](https://bench2dex.github.io/Bench2Dex-Leaderboard/) snapshot of 2026-11-23 (ranked entries with all 26 tasks).
 
 ### Success rate per channel
 
